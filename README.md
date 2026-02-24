@@ -5,7 +5,7 @@
 [![Gemini](https://img.shields.io/badge/Gemini-8E75B2?logo=google&logoColor=white)](https://ai.google.dev/)
 [![SQLite](https://img.shields.io/badge/SQLite-003B57?logo=sqlite&logoColor=white)](https://sqlite.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![CI](https://github.com/onurcandnmz/llm-cost-optimizer/actions/workflows/ci.yml/badge.svg)](https://github.com/onurcandnmz/llm-cost-optimizer/actions)
+[![CI](https://github.com/onurcandonmezer/llm-cost-optimizer/actions/workflows/ci.yml/badge.svg)](https://github.com/onurcandonmezer/llm-cost-optimizer/actions)
 
 Smart request routing and cost management system for LLM APIs. Automatically classifies task complexity and routes requests to the most cost-effective model while maintaining quality.
 
@@ -72,7 +72,7 @@ LLM Cost Optimizer solves the problem of runaway API costs by intelligently rout
 
 ```bash
 # Clone the repository
-git clone https://github.com/onurcandnmz/llm-cost-optimizer.git
+git clone https://github.com/onurcandonmezer/llm-cost-optimizer.git
 cd llm-cost-optimizer
 
 # Install dependencies
