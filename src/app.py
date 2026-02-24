@@ -256,9 +256,7 @@ def render_budget_status(budget_mgr: BudgetManager) -> None:
         col1.markdown(f"**{budget['entity_id'].title()}**")
         col2.metric("Budget", f"${budget['budget_limit']:.2f}")
         col3.metric("Spent", f"${budget['current_spend']:.4f}")
-        col4.markdown(
-            f":{color}[{status.upper()}] ({budget['usage_pct']:.1f}%)"
-        )
+        col4.markdown(f":{color}[{status.upper()}] ({budget['usage_pct']:.1f}%)")
 
         st.progress(min(budget["usage_pct"] / 100, 1.0))
         st.divider()
@@ -289,9 +287,7 @@ def render_savings_report(analytics: TokenAnalytics) -> None:
         delta=f"{savings['savings_pct']:.1f}%",
     )
 
-    st.info(
-        f"Compared against using **{savings['baseline_model']}** for all requests."
-    )
+    st.info(f"Compared against using **{savings['baseline_model']}** for all requests.")
 
     # Efficiency metrics
     st.subheader("Model Efficiency")

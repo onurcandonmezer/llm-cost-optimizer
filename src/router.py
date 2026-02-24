@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import Optional
 
 import yaml
 
@@ -31,7 +30,7 @@ class SmartRouter:
     chains when preferred tiers are unavailable or over budget.
     """
 
-    def __init__(self, config_path: Optional[str | Path] = None) -> None:
+    def __init__(self, config_path: str | Path | None = None) -> None:
         """Initialize the router with model configurations.
 
         Args:
@@ -146,10 +145,10 @@ class SmartRouter:
     def _get_cheapest_model(
         self,
         tier: QualityTier,
-        max_cost: Optional[float] = None,
+        max_cost: float | None = None,
         estimated_input_tokens: int = 500,
         estimated_output_tokens: int = 500,
-    ) -> Optional[ModelConfig]:
+    ) -> ModelConfig | None:
         """Get the cheapest model in a tier that fits within budget.
 
         Args:
@@ -297,7 +296,7 @@ class SmartRouter:
         request = RoutingRequest(content=text, **kwargs)
         return self.route(request)
 
-    def get_available_models(self, tier: Optional[QualityTier] = None) -> list[ModelConfig]:
+    def get_available_models(self, tier: QualityTier | None = None) -> list[ModelConfig]:
         """Get available models, optionally filtered by tier.
 
         Args:

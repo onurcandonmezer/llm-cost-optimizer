@@ -6,9 +6,8 @@ cost trends, efficiency metrics, and potential savings from smart routing.
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from typing import Optional
 
 import yaml
 
@@ -28,7 +27,7 @@ class TokenAnalytics:
     def __init__(
         self,
         cost_tracker: CostTracker,
-        config_path: Optional[str | Path] = None,
+        config_path: str | Path | None = None,
     ) -> None:
         """Initialize the analytics engine.
 
@@ -47,7 +46,7 @@ class TokenAnalytics:
         self.models: dict[str, ModelConfig] = {
             m["model_id"]: ModelConfig(**m) for m in config["models"]
         }
-        self._most_expensive_model: Optional[ModelConfig] = None
+        self._most_expensive_model: ModelConfig | None = None
         if self.models:
             self._most_expensive_model = max(
                 self.models.values(), key=lambda m: m.cost_per_1k_output
@@ -55,8 +54,8 @@ class TokenAnalytics:
 
     def token_usage_by_model(
         self,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
     ) -> list[dict]:
         """Get token usage breakdown by model.
 
@@ -83,8 +82,8 @@ class TokenAnalytics:
 
     def token_usage_by_department(
         self,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
     ) -> list[dict]:
         """Get token usage breakdown by department.
 
@@ -112,7 +111,7 @@ class TokenAnalytics:
     def cost_trends(
         self,
         days: int = 30,
-        department: Optional[str] = None,
+        department: str | None = None,
     ) -> list[dict]:
         """Get cost trends over time.
 
@@ -141,8 +140,8 @@ class TokenAnalytics:
 
     def efficiency_metrics(
         self,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
     ) -> list[dict]:
         """Calculate efficiency metrics per model.
 
@@ -161,9 +160,7 @@ class TokenAnalytics:
         metrics = []
         for s in summaries:
             cost_per_output = (
-                s.total_cost / s.total_output_tokens
-                if s.total_output_tokens > 0
-                else 0
+                s.total_cost / s.total_output_tokens if s.total_output_tokens > 0 else 0
             )
             total_tokens = s.total_input_tokens + s.total_output_tokens
             cost_per_total = s.total_cost / total_tokens if total_tokens > 0 else 0
@@ -182,9 +179,9 @@ class TokenAnalytics:
 
     def savings_calculator(
         self,
-        baseline_model_id: Optional[str] = None,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
+        baseline_model_id: str | None = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
     ) -> dict:
         """Calculate savings from smart routing vs using a single model.
 
@@ -238,8 +235,8 @@ class TokenAnalytics:
 
     def model_utilization_rates(
         self,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
     ) -> list[dict]:
         """Calculate model utilization rates.
 
@@ -261,9 +258,7 @@ class TokenAnalytics:
 
         rates = []
         for s in summaries:
-            request_pct = (
-                s.request_count / total_requests * 100 if total_requests > 0 else 0
-            )
+            request_pct = s.request_count / total_requests * 100 if total_requests > 0 else 0
             cost_pct = s.total_cost / total_cost * 100 if total_cost > 0 else 0
 
             rates.append(

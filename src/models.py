@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import StrEnum
-from typing import Optional
 
 from pydantic import BaseModel, Field
 
@@ -61,15 +60,13 @@ class RoutingRequest(BaseModel):
     """A request to be routed to an appropriate LLM model."""
 
     content: str = Field(description="The text content to process")
-    complexity: Optional[Complexity] = Field(
+    complexity: Complexity | None = Field(
         default=None, description="Pre-classified complexity (auto-detected if None)"
     )
-    department: Optional[str] = Field(default=None, description="Department making the request")
-    project_id: Optional[str] = Field(default=None, description="Project identifier")
-    max_cost: Optional[float] = Field(
-        default=None, ge=0, description="Maximum acceptable cost in USD"
-    )
-    required_quality: Optional[QualityTier] = Field(
+    department: str | None = Field(default=None, description="Department making the request")
+    project_id: str | None = Field(default=None, description="Project identifier")
+    max_cost: float | None = Field(default=None, ge=0, description="Maximum acceptable cost in USD")
+    required_quality: QualityTier | None = Field(
         default=None, description="Minimum required quality tier"
     )
 
@@ -111,7 +108,9 @@ class BudgetAlert(BaseModel):
     def model_post_init(self, __context: object) -> None:
         """Generate default message if not provided."""
         if not self.message:
-            pct_used = (self.current_spend / self.budget_limit * 100) if self.budget_limit > 0 else 0
+            pct_used = (
+                (self.current_spend / self.budget_limit * 100) if self.budget_limit > 0 else 0
+            )
             self.message = (
                 f"{self.alert_type.value.upper()}: Department '{self.department}' has used "
                 f"{pct_used:.1f}% of its ${self.budget_limit:.2f} budget "

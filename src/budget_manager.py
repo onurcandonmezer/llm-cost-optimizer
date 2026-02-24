@@ -7,7 +7,6 @@ linear cost projection for departments and projects.
 from __future__ import annotations
 
 from datetime import datetime, timedelta
-from typing import Optional
 
 from src.cost_tracker import CostTracker
 from src.models import (
@@ -78,7 +77,7 @@ class BudgetManager:
             return True
         return False
 
-    def get_budget(self, entity_id: str) -> Optional[BudgetConfig]:
+    def get_budget(self, entity_id: str) -> BudgetConfig | None:
         """Get the budget configuration for an entity.
 
         Args:
@@ -132,14 +131,10 @@ class BudgetManager:
             raise ValueError(f"No budget configured for '{entity_id}'")
 
         period_start = self._get_period_start(config.period)
-        current_spend = self.cost_tracker.get_department_spend(
-            entity_id, start_date=period_start
-        )
+        current_spend = self.cost_tracker.get_department_spend(entity_id, start_date=period_start)
 
         remaining = max(0, config.budget_limit - current_spend)
-        usage_pct = (
-            (current_spend / config.budget_limit * 100) if config.budget_limit > 0 else 0
-        )
+        usage_pct = (current_spend / config.budget_limit * 100) if config.budget_limit > 0 else 0
 
         if usage_pct >= 100:
             status = "exceeded"
@@ -168,7 +163,7 @@ class BudgetManager:
         """
         return [self.check_budget(entity_id) for entity_id in self._budgets]
 
-    def generate_alerts(self, entity_id: Optional[str] = None) -> list[BudgetAlert]:
+    def generate_alerts(self, entity_id: str | None = None) -> list[BudgetAlert]:
         """Generate alerts for entities that have crossed thresholds.
 
         Args:
@@ -186,14 +181,10 @@ class BudgetManager:
                 continue
 
             period_start = self._get_period_start(config.period)
-            current_spend = self.cost_tracker.get_department_spend(
-                eid, start_date=period_start
-            )
+            current_spend = self.cost_tracker.get_department_spend(eid, start_date=period_start)
 
             usage_pct = (
-                (current_spend / config.budget_limit * 100)
-                if config.budget_limit > 0
-                else 0
+                (current_spend / config.budget_limit * 100) if config.budget_limit > 0 else 0
             )
 
             if usage_pct >= config.critical_threshold_pct:
@@ -239,26 +230,19 @@ class BudgetManager:
               days_ahead, projected_end_of_period
         """
         config = self._budgets.get(entity_id)
-        period_start = self._get_period_start(
-            config.period if config else BudgetPeriod.MONTHLY
-        )
+        period_start = self._get_period_start(config.period if config else BudgetPeriod.MONTHLY)
 
         now = datetime.now()
         days_elapsed = max((now - period_start).days, 1)
 
-        current_spend = self.cost_tracker.get_department_spend(
-            entity_id, start_date=period_start
-        )
+        current_spend = self.cost_tracker.get_department_spend(entity_id, start_date=period_start)
 
         daily_rate = current_spend / days_elapsed
         projected_spend = current_spend + (daily_rate * days_ahead)
 
         # Project to end of period
         if config:
-            if config.period == BudgetPeriod.MONTHLY:
-                days_in_period = 30
-            else:
-                days_in_period = 7
+            days_in_period = 30 if config.period == BudgetPeriod.MONTHLY else 7
             remaining_days = max(days_in_period - days_elapsed, 0)
             projected_end_of_period = current_spend + (daily_rate * remaining_days)
         else:
@@ -272,9 +256,5 @@ class BudgetManager:
             "days_ahead": days_ahead,
             "projected_end_of_period": round(projected_end_of_period, 6),
             "budget_limit": config.budget_limit if config else None,
-            "will_exceed": (
-                projected_end_of_period > config.budget_limit
-                if config
-                else None
-            ),
+            "will_exceed": (projected_end_of_period > config.budget_limit if config else None),
         }

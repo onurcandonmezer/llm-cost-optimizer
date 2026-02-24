@@ -9,7 +9,6 @@ from __future__ import annotations
 import sqlite3
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import Optional
 
 from src.models import CostSummary, UsageRecord
 
@@ -23,7 +22,7 @@ class CostTracker:
     by department, project, model, and time period.
     """
 
-    def __init__(self, db_path: Optional[str | Path] = None) -> None:
+    def __init__(self, db_path: str | Path | None = None) -> None:
         """Initialize the cost tracker.
 
         Args:
@@ -156,8 +155,8 @@ class CostTracker:
 
     def get_costs_by_department(
         self,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
     ) -> list[CostSummary]:
         """Get cost summaries grouped by department.
 
@@ -193,9 +192,9 @@ class CostTracker:
 
     def get_costs_by_project(
         self,
-        department: Optional[str] = None,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
+        department: str | None = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
     ) -> list[CostSummary]:
         """Get cost summaries grouped by project.
 
@@ -235,8 +234,8 @@ class CostTracker:
 
     def get_costs_by_model(
         self,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
     ) -> list[CostSummary]:
         """Get cost summaries grouped by model.
 
@@ -273,7 +272,7 @@ class CostTracker:
     def get_daily_costs(
         self,
         days: int = 30,
-        department: Optional[str] = None,
+        department: str | None = None,
     ) -> list[dict]:
         """Get daily cost totals for the specified number of days.
 
@@ -311,8 +310,8 @@ class CostTracker:
 
     def total_cost(
         self,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
     ) -> float:
         """Get the total cost across all records.
 
@@ -357,8 +356,8 @@ class CostTracker:
     def get_department_spend(
         self,
         department: str,
-        start_date: Optional[datetime] = None,
-        end_date: Optional[datetime] = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
     ) -> float:
         """Get total spend for a specific department.
 
@@ -397,7 +396,7 @@ class CostTracker:
 
     def __del__(self) -> None:
         """Ensure the database connection is closed on cleanup."""
-        try:
+        import contextlib
+
+        with contextlib.suppress(Exception):
             self._conn.close()
-        except Exception:
-            pass
